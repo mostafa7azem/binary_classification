@@ -1,0 +1,60 @@
+'''
+HelloWorld example using TensorFlow library.
+Author: Aymeric Damien
+Project: https://github.com/aymericdamien/TensorFlow-Examples/
+'''
+
+from __future__ import print_function
+
+import tensorflow as tf
+from keras.models import load_model
+import numpy as np
+import pandas as pd
+from keras.models import Sequential
+from keras.layers import Dense
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+seed = 7
+np.random.seed(seed)
+dataframe = pd.read_csv("dataset/train_all.csv")
+dataframe_test = pd.read_csv("dataset/test_all.csv", index_col='id')
+dataframe['class']=dataframe['class']-1
+sns.distplot(dataframe['R'])
+plt.show()
+sns.distplot(dataframe['G'])
+plt.show()
+sns.distplot(dataframe['B'])
+plt.show()
+cov1 = dataframe.iloc[:, 1:3].cov()
+sns.heatmap(cov1)
+plt.show()
+cov2 = dataframe.iloc[:, 2:4].cov()
+sns.heatmap(cov2)
+plt.show()
+cov3 = dataframe.iloc[:, [1,3]].cov()
+sns.heatmap(cov3)
+plt.show()
+cov4 = dataframe.iloc[:, 1:4].cov()
+sns.heatmap(cov4)
+plt.show()
+X=dataframe.iloc[:,1:4].values
+Y=dataframe['class'].values
+print(X,Y)
+#model = Sequential()
+#model.add(Dense(32, activation='relu', input_dim=3))
+#model.add(Dense(1, activation='sigmoid'))
+#model.compile(optimizer='rmsprop',
+  #           loss='binary_crossentropy',
+ #         metrics=['accuracy'])
+#model.fit(X,Y, epochs=10, batch_size=32)
+#model.save('model.h5')
+#del model
+model = load_model('model.h5')
+predictions = np.array(model.predict(dataframe_test), dtype='int')[:, 0]
+# Set the data into the suitable format
+test = dataframe_test.drop(['B', 'G', 'R'], axis=1)
+test['class'] = (predictions + 1)
+# Save the data to csv format
+test.to_csv('output.csv', sep=',')
