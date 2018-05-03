@@ -21,6 +21,10 @@ np.random.seed(seed)
 dataframe = pd.read_csv("dataset/train_all.csv")
 dataframe_test = pd.read_csv("dataset/test_all.csv", index_col='id')
 dataframe['class']=dataframe['class']-1
+sns.pairplot(dataframe)
+plt.show()
+sns.heatmap(dataframe.iloc[:,1:4].corr())
+plt.show()
 sns.distplot(dataframe['R'])
 plt.show()
 sns.distplot(dataframe['G'])
@@ -41,6 +45,7 @@ sns.heatmap(cov4)
 plt.show()
 X=dataframe.iloc[:,1:4].values
 Y=dataframe['class'].values
+plt.show()
 print(X,Y)
 #model = Sequential()
 #model.add(Dense(32, activation='relu', input_dim=3))
@@ -57,4 +62,6 @@ predictions = np.array(model.predict(dataframe_test), dtype='int')[:, 0]
 test = dataframe_test.drop(['B', 'G', 'R'], axis=1)
 test['class'] = (predictions + 1)
 # Save the data to csv format
+sns.distplot(test['class'])
+plt.show()
 test.to_csv('output.csv', sep=',')
